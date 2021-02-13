@@ -1,10 +1,8 @@
-var gulp = require('gulp');
+var { series, src, dest, watch } = require('gulp');
 var sass = require('gulp-sass');
-var header = require('gulp-header');
 var cleanCSS = require('gulp-clean-css');
 var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
-var pkg = require('./package.json');
 var browserSync = require('browser-sync').create();
 
 // Set the banner content
@@ -16,76 +14,82 @@ var banner = ['/*!\n',
 ].join('');
 
 // Copy third party libraries from /node_modules into /vendor
-gulp.task('vendor', function() {
+function copyBootstrap() {
+  return src([
+    './node_modules/bootstrap/dist/**/*',
+    '!./node_modules/bootstrap/dist/css/bootstrap-grid*',
+    '!./node_modules/bootstrap/dist/css/bootstrap-reboot*'
+  ])
+  .pipe(dest('./vendor/bootstrap'));
+}
 
-  // Bootstrap
-  gulp.src([
-      './node_modules/bootstrap/dist/**/*',
-      '!./node_modules/bootstrap/dist/css/bootstrap-grid*',
-      '!./node_modules/bootstrap/dist/css/bootstrap-reboot*'
-    ])
-    .pipe(gulp.dest('./vendor/bootstrap'))
+function copyDevicons() {
+  return  src([
+    './node_modules/devicons/**/*',
+    '!./node_modules/devicons/*.json',
+    '!./node_modules/devicons/*.md',
+    '!./node_modules/devicons/!PNG',
+    '!./node_modules/devicons/!PNG/**/*',
+    '!./node_modules/devicons/!SVG',
+    '!./node_modules/devicons/!SVG/**/*'
+  ])
+  .pipe(dest('./vendor/devicons'));
+}
 
-  // Devicons
-  gulp.src([
-      './node_modules/devicons/**/*',
-      '!./node_modules/devicons/*.json',
-      '!./node_modules/devicons/*.md',
-      '!./node_modules/devicons/!PNG',
-      '!./node_modules/devicons/!PNG/**/*',
-      '!./node_modules/devicons/!SVG',
-      '!./node_modules/devicons/!SVG/**/*'
-    ])
-    .pipe(gulp.dest('./vendor/devicons'))
+function copyFontAwesome() {
+  return  src([
+    './node_modules/font-awesome/**/*',
+    '!./node_modules/font-awesome/{less,less/*}',
+    '!./node_modules/font-awesome/{scss,scss/*}',
+    '!./node_modules/font-awesome/.*',
+    '!./node_modules/font-awesome/*.{txt,json,md}'
+  ])
+  .pipe(dest('./vendor/font-awesome'));
+}
 
-  // Font Awesome
-  gulp.src([
-      './node_modules/font-awesome/**/*',
-      '!./node_modules/font-awesome/{less,less/*}',
-      '!./node_modules/font-awesome/{scss,scss/*}',
-      '!./node_modules/font-awesome/.*',
-      '!./node_modules/font-awesome/*.{txt,json,md}'
-    ])
-    .pipe(gulp.dest('./vendor/font-awesome'))
+function copyJQuery() {
+  return src([
+    './node_modules/jquery/dist/*',
+    '!./node_modules/jquery/dist/core.js'
+  ])
+  .pipe(dest('./vendor/jquery'));
+}
 
-  // jQuery
-  gulp.src([
-      './node_modules/jquery/dist/*',
-      '!./node_modules/jquery/dist/core.js'
-    ])
-    .pipe(gulp.dest('./vendor/jquery'))
+function copyJQueryEasing() {
+  return src([
+    './node_modules/jquery.easing/*.js'
+  ])
+  .pipe(dest('./vendor/jquery-easing'));
+}
 
-  // jQuery Easing
-  gulp.src([
-      './node_modules/jquery.easing/*.js'
-    ])
-    .pipe(gulp.dest('./vendor/jquery-easing'))
+function copySimpleLineIcons() {
+  return src([
+    './node_modules/simple-line-icons/fonts/**',
+  ])
+  .pipe(dest('./vendor/simple-line-icons/fonts'));
+}
 
-  // Simple Line Icons
-  gulp.src([
-      './node_modules/simple-line-icons/fonts/**',
-    ])
-    .pipe(gulp.dest('./vendor/simple-line-icons/fonts'))
+function copySimpleLineIconsCss() {
+  return src([
+    './node_modules/simple-line-icons/css/**',
+  ])
+  .pipe(dest('./vendor/simple-line-icons/css'));
+}
 
-  gulp.src([
-      './node_modules/simple-line-icons/css/**',
-    ])
-    .pipe(gulp.dest('./vendor/simple-line-icons/css'))
-
-});
+const copy = series(copyBootstrap, copyDevicons, copyFontAwesome, copyJQuery, copyJQueryEasing, copySimpleLineIcons, copySimpleLineIconsCss);
 
 // Compile SCSS
-gulp.task('css:compile', function() {
-  return gulp.src('./scss/**/*.scss')
-    .pipe(sass.sync({
-      outputStyle: 'expanded'
-    }).on('error', sass.logError))
-    .pipe(gulp.dest('./css'))
-});
+function cssCompile() {
+  return src('./scss/**/*.scss')
+  .pipe(sass.sync({
+    outputStyle: 'expanded'
+  }).on('error', sass.logError))
+  .pipe(dest('./css'));
+}
 
 // Minify CSS
-gulp.task('css:minify', ['css:compile'], function() {
-  return gulp.src([
+function cssMinify() {
+  return src([
       './css/*.css',
       '!./css/*.min.css'
     ])
@@ -93,16 +97,16 @@ gulp.task('css:minify', ['css:compile'], function() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('./css'))
+    .pipe(dest('./css'))
     .pipe(browserSync.stream());
-});
+}
 
 // CSS
-gulp.task('css', ['css:compile', 'css:minify']);
+const css = series(cssCompile, cssMinify);
 
 // Minify JavaScript
-gulp.task('js:minify', function() {
-  return gulp.src([
+function jsMinify() {
+  return src([
       './js/*.js',
       '!./js/*.min.js'
     ])
@@ -110,28 +114,34 @@ gulp.task('js:minify', function() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('./js'))
+    .pipe(dest('./js'))
     .pipe(browserSync.stream());
-});
+}
 
 // JS
-gulp.task('js', ['js:minify']);
-
-// Default task
-gulp.task('default', ['css', 'js', 'vendor']);
+const js = series(jsMinify);
 
 // Configure the browserSync task
-gulp.task('browserSync', function() {
+function browserSyncServe(cb) {
   browserSync.init({
     server: {
       baseDir: "./"
     }
   });
-});
+  cb();
+}
+
+function browserSyncReload(cb){
+  browserSync.reload();
+  cb();
+}
 
 // Dev task
-gulp.task('dev', ['css', 'js', 'browserSync'], function() {
-  gulp.watch('./scss/*.scss', ['css']);
-  gulp.watch('./js/*.js', ['js']);
-  gulp.watch('./*.html', browserSync.reload);
-});
+function devwatch(){
+  watch('./scss/*.scss', css, browserSyncReload);
+  watch('./js/*.js',js, browserSyncReload);
+  watch('./*.html', browserSyncReload);
+}
+
+exports.default = series(copy, css, js);
+exports.dev = series(copy, css, js, browserSyncServe, devwatch)
