@@ -49,17 +49,16 @@ function copyFontAwesome() {
 
 function copyJQuery() {
   return src([
-    './node_modules/jquery/dist/*',
-    '!./node_modules/jquery/dist/core.js'
+    './node_modules/jquery/dist/*.min.js'
   ])
   .pipe(dest('./vendor/jquery'));
 }
 
-function copyJQueryEasing() {
+function copyJQueryUI() {
   return src([
-    './node_modules/jquery.easing/*.js'
+    './node_modules/jquery-ui-dist/*.min.js'
   ])
-  .pipe(dest('./vendor/jquery-easing'));
+  .pipe(dest('./vendor/jquery-ui'));
 }
 
 function copySimpleLineIcons() {
@@ -76,7 +75,7 @@ function copySimpleLineIconsCss() {
   .pipe(dest('./vendor/simple-line-icons/css'));
 }
 
-const copy = series(copyBootstrap, copyDevicons, copyFontAwesome, copyJQuery, copyJQueryEasing, copySimpleLineIcons, copySimpleLineIconsCss);
+const copy = series(copyBootstrap, copyDevicons, copyFontAwesome, copyJQuery, copyJQueryUI, copySimpleLineIcons, copySimpleLineIconsCss);
 
 // Compile SCSS
 function cssCompile() {
