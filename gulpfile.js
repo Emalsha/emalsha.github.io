@@ -38,11 +38,11 @@ function copyDevicons() {
 
 function copyFontAwesome() {
   return  src([
-    './node_modules/font-awesome/**/*',
-    '!./node_modules/font-awesome/{less,less/*}',
-    '!./node_modules/font-awesome/{scss,scss/*}',
-    '!./node_modules/font-awesome/.*',
-    '!./node_modules/font-awesome/*.{txt,json,md}'
+    './node_modules/@fortawesome/fontawesome-free/**/*',
+    '!./node_modules/@fortawesome/fontawesome-free/{less,less/*}',
+    '!./node_modules/@fortawesome/fontawesome-free/{scss,scss/*}',
+    '!./node_modules/@fortawesome/fontawesome-free/.*',
+    '!./node_modules/@fortawesome/fontawesome-free/*.{txt,json,md}'
   ])
   .pipe(dest('./vendor/font-awesome'));
 }
