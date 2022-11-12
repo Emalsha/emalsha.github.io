@@ -1,5 +1,5 @@
 body {
-  font-family: 'Open Sans', serif;
+  font-family: "Open Sans", serif;
   padding-top: 54px;
   color: #868e96;
 }
@@ -10,14 +10,13 @@ body {
     padding-left: 17rem;
   }
 }
-
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: 'Saira Extra Condensed', serif;
+  font-family: "Saira Extra Condensed", serif;
   font-weight: 700;
   text-transform: uppercase;
   color: #343a40;
@@ -35,18 +34,16 @@ h2 {
 .subheading {
   text-transform: uppercase;
   font-weight: 500;
-  font-family: 'Saira Extra Condensed', serif;
+  font-family: "Saira Extra Condensed", serif;
   font-size: 1.35rem;
 }
 
 .list-social-icons a {
   color: #495057;
 }
-
 .list-social-icons a:hover {
   color: #4481BE;
 }
-
 .list-social-icons a .fa-lg {
   font-size: 1.75rem;
 }
@@ -54,7 +51,6 @@ h2 {
 .list-icons {
   font-size: 3rem;
 }
-
 .list-icons .list-inline-item i:hover {
   color: #4481BE;
 }
@@ -81,8 +77,6 @@ h2 {
     padding: 0.5rem;
   }
   #sideNav .navbar-brand .img-profile {
-    max-width: 10rem;
-    max-height: 10rem;
     border: 0.5rem solid rgba(255, 255, 255, 0.2);
   }
   #sideNav .navbar-collapse {
@@ -103,13 +97,11 @@ h2 {
     display: block;
   }
 }
-
 section.resume-section {
   border-bottom: 1px solid #dee2e6;
   padding-top: 5rem !important;
   padding-bottom: 5rem !important;
 }
-
 section.resume-section .resume-item .resume-date {
   min-width: none;
 }
@@ -122,14 +114,12 @@ section.resume-section .resume-item .resume-date {
     min-width: 18rem;
   }
 }
-
 @media (min-width: 992px) {
   section.resume-section {
     padding-top: 3rem !important;
     padding-bottom: 3rem !important;
   }
 }
-
 .bg-primary {
   background-color: #4481BE !important;
 }
@@ -141,7 +131,10 @@ section.resume-section .resume-item .resume-date {
 a {
   color: #4481BE;
 }
-
 a:hover, a:focus, a:active {
   color: #2f5b87;
+}
+
+.container-fluid {
+  max-width: 920px;
 }
