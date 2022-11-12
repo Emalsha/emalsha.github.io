@@ -14,3 +14,7 @@ a {
     color: darken($primary, 15%);
   }
 }
+
+.container-fluid {
+  max-width: 920px;
+}
